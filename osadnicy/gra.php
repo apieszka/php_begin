@@ -8,7 +8,16 @@
 </head>
 
 <body>
+<?php
+    session_start();
+    echo "<p>W.itaj " . $_SESSION['user'] . "!<br>";
+    echo "<p><b>Drewno</b>: ".$_SESSION['drewno'];
+    echo "| <b>Kamień</b>: ".$_SESSION['kamien'];
+    echo "| <b>Zboże</b>: ".$_SESSION['zboze']."<p>";
 
+    echo "<p><b>E-mail</b>: ".$_SESSION['email'];
+    echo "|<b>Ilość dni premium</b>: ".$_SESSION['dnipremium']."</p>";
+?>
     
 </body>
 
