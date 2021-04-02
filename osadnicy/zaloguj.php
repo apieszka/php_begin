@@ -1,6 +1,9 @@
 <?php
     session_start(); //aby działało na innych stronach równiez trzeba dać session_start() na początku dokumentu
-
+    if (!isset($_POST['login']) || !isset($_POST['haslo'])){
+        header('Location: index.php');
+        exit();
+    }
     require_once "db_connect.php"; // require - generates a fatal error in the event of an error
                                    // include - causes the code to go on
                                    //once - causes it to attach a file only once!
@@ -16,15 +19,25 @@
         $login=$_POST['login'];
         $haslo = $_POST['haslo'];
 
-        $sql = "SELECT * FROM uzytkownicy WHERE user='$login' AND pass='$haslo'"; //enquiry in " ", php variables in ' '
+        $login = htmlentities($login, ENT_QUOTES, "UTF_8");
+        $haslo = htmlentities($haslo, ENT_QUOTES, "UTF_8");
 
-        if ($rezultat = @$polaczenie->query($sql))
-        {
+        //$sql = "SELECT * FROM uzytkownicy WHERE user='$login' AND pass='$haslo'"; //enquiry in " ", php variables in ' '
+
+        
+        if ($rezultat = @$polaczenie->query(
+        sprintf("SELECT * FROM uzytkownicy WHERE user='%s' AND pass='%s'", 
+        mysqli_real_escape_string($polaczenie, $login),
+        mysqli_real_escape_string($polaczenie, $haslo)))){
+
             $ilu_userow = $rezultat->num_rows;
             if($ilu_userow>0)
             {
+                $_SESSION['zalogowany'] = true;
+
                 $wiersz = $rezultat->fetch_assoc(); //przynieś dane i włóż je do tablicy asocjacyjnej - skojarzeniowo jako indeks posłużą nazwy z bazy
                 //tablica ze słownym indeksem
+                $_SESSION['id'] = $wiersz['id'];
                 $_SESSION['user'] = $wiersz['user'];
                 $_SESSION['drewno'] = $wiersz['drewno'];
                 $_SESSION['kamien'] = $wiersz['kamien'];
